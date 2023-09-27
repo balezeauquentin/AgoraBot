@@ -13,6 +13,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+import sqlite3
+
+
+
 #-------------------------définition des variables-------------------------#
 
 driver = webdriver.Firefox()
@@ -53,6 +57,31 @@ def rajouter_sql(question,reponse):
 
     # Ferme la connexion à la base de données
     conn.close()
+
+
+class Database:
+    def __init__(self, db) -> None:
+        self.db = sqlite3.connect(db)
+        self.cursor = self.db.cursor()
+
+    def insert(self, question, answer) -> None:
+        self.cursor.execute("INSERT INTO questions(question, answer) VALUES (?, ?)", (question, answer))
+        self.db.commit()
+
+    def check_entry(self, question) -> int:
+        self.cursor.execute("SELECT * FROM questions WHERE question=?", (question,))
+        rows = self.cursor.fetchall()
+        if len(rows) > 0:
+            return True
+        return False
+
+    def get_answer(self, question) -> str:
+        self.cursor.execute("SELECT answer FROM questions WHERE question=?", (question,))
+        rows = self.cursor.fetchall()
+        return rows[0][0]
+
+    def close(self) -> None:
+        self.db.close()
 
 
 def get_html():
@@ -98,7 +127,7 @@ def phase():
     soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
     texte_question = soup.get_text()
     #reponse = obtenir_reponse(texte_question)
-    reponse= None
+    reponse = None
     if reponse:
         print("Réponse :", reponse)
         expression_xpath = f'//button[contains(text(), "{reponse}")]'
@@ -111,11 +140,8 @@ def phase():
         pyautogui.click(x_centre, y_centre)
         boutons_aleatoires = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'button.mat-raised-button')))
-        time.sleep(1)
-        largeur_ecran, hauteur_ecran = pyautogui.size()
-        x_centre = largeur_ecran // 2
-        y_centre = hauteur_ecran // 2
-        pyautogui.click(x_centre, y_centre)
+        time.sleep(2)
+
 
         # Choisis un bouton au hasard parmi ceux trouvés
         if boutons_aleatoires:
@@ -123,6 +149,11 @@ def phase():
 
             # Clique sur le bouton choisi
             bouton_choisi.click()
+            time.sleep(2)
+            largeur_ecran, hauteur_ecran = pyautogui.size()
+            x_centre = largeur_ecran // 2
+            y_centre = hauteur_ecran // 2
+            pyautogui.click(x_centre, y_centre)
         else:
             print("Aucun bouton trouvé")
 
@@ -201,17 +232,24 @@ def start_partie(idt2):
         bouton_duel = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//button[contains(.,"'+idt2+'")]')))
         bouton_duel.click()
-        time.sleep(5)
-        largeur_ecran, hauteur_ecran = pyautogui.size()
-        x_centre = largeur_ecran // 2
-        y_centre = hauteur_ecran // 2
-        pyautogui.click(x_centre, y_centre)
-        boutons_similaires = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, '.mat-raised-button.theme-button')))
-        boutons_similaires.click()
-        partie()
 
-        print("erreur lancement de partie")
+        url_actuelle = driver.current_url
+        if url_actuelle != "https://agora-quiz.education/Games/List":
+            #passage debut duel ou on voit les tete
+
+            time.sleep(5)
+            largeur_ecran, hauteur_ecran = pyautogui.size()
+            x_centre = largeur_ecran // 2
+            y_centre = hauteur_ecran // 2
+            pyautogui.click(x_centre, y_centre)
+
+
+            boutons_similaires = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.mat-raised-button.theme-button')))
+            boutons_similaires.click()
+            partie()
+        else:
+            print("erreur lancement de partie")
     
     # Récupération de la taille de l'écran et clic au centre de l'écran
 
