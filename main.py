@@ -147,18 +147,24 @@ def partie():
         phase()
         time.sleep(4)
     #apprantisage()
-    bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
-    bouton_suivant.click()
-    time.sleep(2)
-    bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
-    if bouton_suivant:
+    try:
+        bouton_fermer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Fermer")]')))
+        if bouton_fermer:
+            bouton_fermer.click()
+    finally:
+
+        bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
         bouton_suivant.click()
-        print("partie fini a l'autre")
-    else:
-        bouton_suivant = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Manche Suivante")]')))
+        time.sleep(2)
+        bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
         if bouton_suivant:
             bouton_suivant.click()
-            partie()
+            print("partie fini a l'autre")
+        else:
+            bouton_suivant = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.," Manche Suivante ")]')))
+            if bouton_suivant:
+                bouton_suivant.click()
+                partie()
 # Définition de la fonction connection avec deux arguments idt et motdp
 
 def connection(idt,motdp):
