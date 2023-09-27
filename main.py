@@ -1,14 +1,18 @@
-import time
+#-------------------------importation des modules-------------------------#
+
 import pyautogui
-import unittest
 import random
-import sqlite3
 import requests
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+import sqlite3
+import unittest
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+#-------------------------définition des variables-------------------------#
 
 driver = webdriver.Firefox()
 
@@ -19,6 +23,7 @@ idt2="QuantumScribe"
 motdp2=";AgoraBot0"
 conn = sqlite3.connect('QR.db')
 
+#-------------------------définition des fonctions-------------------------#
 
 def rajouter_sql(question,reponse):
     # Connexion à la base de données SQLite (ou création si elle n'existe pas)
@@ -40,6 +45,8 @@ def rajouter_sql(question,reponse):
 
     # Ferme la connexion à la base de données
     conn.close()
+
+
 def get_html():
     url = driver.current_url
     response = requests.get(url)
@@ -63,37 +70,40 @@ def get_html():
         print('La requête a échoué avec le code de statut :', response.status_code)
         return None
 
+
+# Définition de la fonction obtenir_reponse avec un argument question
 def obtenir_reponse(question):
+    # Création d'un curseur pour exécuter une requête SQL
     cursor = conn.cursor()
+    
+    # Exécution de la requête SQL pour récupérer la réponse à la question donnée
     cursor.execute('SELECT ReponseText FROM Reponses INNER JOIN Questions ON Reponses.QuestionID = Questions.QuestionID WHERE Questions.QuestionText = ?', (question,))
+    
+    # Récupération du résultat de la requête
     result = cursor.fetchone()
+    
+    # Retourne la réponse si elle existe, sinon retourne None
     return result[0] if result else None
-def partie():
-    for i in range(3):
-        time.sleep(5)
-        element_question = driver.find_element(By.CSS_SELECTOR,'.question-content b')
-        soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
-        texte_question = soup.get_text()
-        reponse = obtenir_reponse(texte_question)
-        if reponse:
-            print("Réponse :", reponse)
-            expression_xpath = f'//button[contains(text(), "{reponse}")]'
-            bouton_reponse = driver.find_element(By.XPATH,expression_xpath)
-            bouton_reponse.click()
-        else:
-            boutons_aleatoires = driver.find_elements(By.CSS_SELECTOR,'button.mat-raised-button')
 
-            # Choisis un bouton au hasard parmi ceux trouvés
-            if boutons_aleatoires:
-                bouton_choisi = random.choice(boutons_aleatoires)
 
-                # Clique sur le bouton choisi
-                bouton_choisi.click()
-                time.sleep(3)
-            else:
-                print("Aucun bouton trouvé")
-
-    html_content = get_html()
+# Définition de la fonction connection avec deux arguments idt et motdp
+def connection(idt,motdp):
+    
+    # Recherche de l'élément identifiant et envoi de la valeur de idt
+    identifiant = driver.find_element(By.ID, "mat-input-0")
+    identifiant.send_keys(idt)
+    
+    # Recherche de l'élément mdp et envoi de la valeur de motdp
+    mdp = driver.find_element(By.ID, "mat-input-1")
+    mdp.send_keys(motdp)
+    
+    # Recherche du bouton_connexion et clic dessus
+    bouton_connexion = driver.find_element(By.CLASS_NAME,"primary-button")
+    bouton_connexion.click()
+    
+    # Recherche du bouton_jouer et clic dessus après qu'il soit visible
+    bouton_jouer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
+    bouton_jouer.click()
 
     # Utilise BeautifulSoup pour analyser le code HTML
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -113,50 +123,70 @@ def partie():
         else:
             response = "Aucune réponse trouvée"
 
+
+# Définition de la fonction connection avec deux arguments idt et motdp
 def connection(idt,motdp):
+    
+    # Recherche de l'élément identifiant et envoi de la valeur de idt
     identifiant = driver.find_element(By.ID, "mat-input-0")
     identifiant.send_keys(idt)
+    
+    # Recherche de l'élément mdp et envoi de la valeur de motdp
     mdp = driver.find_element(By.ID, "mat-input-1")
     mdp.send_keys(motdp)
-    bouton = driver.find_element(By.CLASS_NAME,"primary-button")
-    bouton.click()
     
-    bouton_jouer = WebDriverWait(driver, 3).until(
-        EC.visibility_of_element_located(By.XPATH, '//button[contains(.,"Jouer des Parties")]'))
-    )
+    # Recherche du bouton_connexion et clic dessus
+    bouton_connexion = driver.find_element(By.CLASS_NAME,"primary-button")
+    bouton_connexion.click()
+    
+    # Recherche du bouton_jouer et clic dessus après qu'il soit visible
+    bouton_jouer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
     bouton_jouer.click()
 
     
+# Définition de la fonction start_partie avec un argument idt2
 def start_partie(idt2):
-    input_adversaire=driver.find_element(By.ID,"mat-input-3")
-    input_adversaire.send_keys(idt2)
 
+    # Recherche de l'élément input_adversaire et envoi de la valeur de idt2
+    input_adversaire = WebDriverWait(driver,3).until(EC.presence_of_all_elements_located((By.ID,"mat-input-3")))
+    input_adversaire.send_keys(idt2)
     
-    
-    bouton_inviter = driver.find_element(By.XPATH, '//button[contains(.,"Inviter")]')
+    # Recherche du bouton_inviter et clic dessus
+    bouton_inviter = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
     bouton_inviter.click()
-    time.sleep(3)
+    
+    # Récupération de la taille de l'écran et clic au centre de l'écran
     largeur_ecran, hauteur_ecran = pyautogui.size()
     x_centre = largeur_ecran // 2
     y_centre = hauteur_ecran // 2
     pyautogui.click(x_centre, y_centre)
-    time.sleep(3)
-    boutons_similaires = driver.find_element(By.CSS_SELECTOR,'.mat-raised-button.theme-button')
+
+    # Recherche du bouton boutons_similaires et clic dessus
+    boutons_similaires = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'.mat-raised-button.theme-button')))
     boutons_similaires.click()
-    time.sleep(3)
-    partie()
-    time.sleep(3)
     
+    # Appel de la fonction partie()
+    partie()
 
 
+# Ouvre le site https://agora-quiz.education/Games/List en utilisant le navigateur web contrôlé par Selenium WebDriver
 driver.get('https://agora-quiz.education/Games/List')
+
+# Récupère l'URL actuelle de la page
 url_actuelle = driver.current_url
+
+# Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
 if url_actuelle == "https://agora-quiz.education/Login":
     connection(idt,motdp)
-    time.sleep(3)
-    print("lapin")
-    start_partie(idt2)
+    
+# Affiche "lapin" dans la console
+print("lapin")
 
-time.sleep(100)
+# Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
+start_partie(idt2)
+
+# Ferme la connexion à la base de données
 conn.close()
+
+# Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
