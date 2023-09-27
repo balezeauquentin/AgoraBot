@@ -1,4 +1,5 @@
 #-------------------------importation des modules-------------------------#
+import time
 
 import pyautogui
 import random
@@ -15,11 +16,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 #-------------------------définition des variables-------------------------#
 
 driver = webdriver.Firefox()
+#idt = "unlapinrameur"
+#motdp = ";leslapins"
+
+#idt2="QuantumScribe"
+#motdp2=";AgoraBot0"
+
+
 
 idt = "QuantumScribe"
 motdp = ";AgoraBot0"
 
-idt2="QBalezeau"
+idt2="hallaine"
 motdp2=";AgoraBot0"
 conn = sqlite3.connect('QR.db')
 
@@ -84,70 +92,60 @@ def obtenir_reponse(question):
     
     # Retourne la réponse si elle existe, sinon retourne None
     return result[0] if result else None
+def phase():
+    element_question = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, '.question-content b')))
+    soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
+    texte_question = soup.get_text()
+    #reponse = obtenir_reponse(texte_question)
+    reponse= None
+    if reponse:
+        print("Réponse :", reponse)
+        expression_xpath = f'//button[contains(text(), "{reponse}")]'
+        bouton_reponse = driver.find_element(By.XPATH, expression_xpath)
+        bouton_reponse.click()
+    else:
+        largeur_ecran, hauteur_ecran = pyautogui.size()
+        x_centre = largeur_ecran // 2
+        y_centre = hauteur_ecran // 2
+        pyautogui.click(x_centre, y_centre)
+        boutons_aleatoires = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'button.mat-raised-button')))
+        time.sleep(1)
+        largeur_ecran, hauteur_ecran = pyautogui.size()
+        x_centre = largeur_ecran // 2
+        y_centre = hauteur_ecran // 2
+        pyautogui.click(x_centre, y_centre)
+
+        # Choisis un bouton au hasard parmi ceux trouvés
+        if boutons_aleatoires:
+            bouton_choisi = random.choice(boutons_aleatoires)
+
+            # Clique sur le bouton choisi
+            bouton_choisi.click()
+        else:
+            print("Aucun bouton trouvé")
+
 
 def partie():
     for i in range(3):
-        element_question = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'.question-content b')))
-        soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
-        texte_question = soup.get_text()
-        reponse = obtenir_reponse(texte_question)
-        if reponse:
-            print("Réponse :", reponse)
-            expression_xpath = f'//button[contains(text(), "{reponse}")]'
-            bouton_reponse = driver.find_element(By.XPATH,expression_xpath)
-            bouton_reponse.click()
-        else:
-            boutons_aleatoires = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,'button.mat-raised-button')))
 
-            # Choisis un bouton au hasard parmi ceux trouvés
-            if boutons_aleatoires:
-                bouton_choisi = random.choice(boutons_aleatoires)
-
-                # Clique sur le bouton choisi
-                bouton_choisi.click()
-            else:
-                print("Aucun bouton trouvé")
+        phase()
+        time.sleep(4)
+    #apprantisage()
+    bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
+    bouton_suivant.click()
+    time.sleep(2)
+    bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
+    if bouton_suivant:
+        bouton_suivant.click()
+    else:
+        bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Manche Suivante")]')))
+        if bouton_suivant:
+            bouton_suivant.click()
+            partie()
 # Définition de la fonction connection avec deux arguments idt et motdp
-def connection(idt,motdp):
-    
-    # Recherche de l'élément identifiant et envoi de la valeur de idt
-    identifiant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.ID, "mat-input-1")))
-    identifiant.send_keys(idt)
-    
-    # Recherche de l'élément mdp et envoi de la valeur de motdp
-    mdp = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.ID, "mat-input-1")))
-    mdp.send_keys(motdp)
-    
-    # Recherche du bouton_connexion et clic dessus
-    bouton_connexion = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.CLASS_NAME,"primary-button")))
-    
-    bouton_connexion.click()
-    
-    # Recherche du bouton_jouer et clic dessus après qu'il soit visible
-    bouton_jouer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
-    bouton_jouer.click()
 
-    html_content = get_html()
-    # Utilise BeautifulSoup pour analyser le code HTML
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    # Sélectionne toutes les sections de réponses
-    sections = soup.find_all('app-user-answer')
-
-    # Boucle à travers les sections de réponses
-    for section in sections:
-        # Extrait la question
-        question = section.find('div', class_='question-div').text.strip()
-
-        # Extrait la réponse
-        response_div = section.find('div', class_='good-answer-div')
-        if response_div:
-            response = response_div.find('b', class_='success-text').text.strip()
-        else:
-            response = "Aucune réponse trouvée"
-
-
-# Définition de la fonction connection avec deux arguments idt et motdp
 def connection(idt,motdp):
     
     # Recherche de l'élément identifiant et envoi de la valeur de idt
@@ -161,10 +159,19 @@ def connection(idt,motdp):
     # Recherche du bouton_connexion et clic dessus
     bouton_connexion = driver.find_element(By.CLASS_NAME,"primary-button")
     bouton_connexion.click()
-    
+    # Récupère l'URL actuelle de la page
+    url_actuelle = driver.current_url
+
+    # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
+    if url_actuelle != "https://agora-quiz.education/Login":
+
     # Recherche du bouton_jouer et clic dessus après qu'il soit visible
-    bouton_jouer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
-    bouton_jouer.click()
+        bouton_jouer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
+        bouton_jouer.click()
+        return True
+    else:
+        print("erreur connection")
+        return False
 
     
 # Définition de la fonction start_partie avec un argument idt2
@@ -177,19 +184,42 @@ def start_partie(idt2):
     # Recherche du bouton_inviter et clic dessus
     bouton_inviter = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
     bouton_inviter.click()
+    url_actuelle = driver.current_url
+    if url_actuelle != "https://agora-quiz.education/Games/List":
+        time.sleep(5)
+        largeur_ecran, hauteur_ecran = pyautogui.size()
+        x_centre = largeur_ecran // 2
+        y_centre = hauteur_ecran // 2
+        pyautogui.click(x_centre, y_centre)
+
+        # Recherche du bouton boutons_similaires et clic dessus
+        boutons_similaires = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.mat-raised-button.theme-button')))
+        boutons_similaires.click()
+        partie()
+    else:
+        bouton_duel = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//button[contains(.,"'+idt2+'")]')))
+        bouton_duel.click()
+        time.sleep(5)
+        largeur_ecran, hauteur_ecran = pyautogui.size()
+        x_centre = largeur_ecran // 2
+        y_centre = hauteur_ecran // 2
+        pyautogui.click(x_centre, y_centre)
+        boutons_similaires = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.mat-raised-button.theme-button')))
+        boutons_similaires.click()
+        partie()
+
+        print("erreur lancement de partie")
     
     # Récupération de la taille de l'écran et clic au centre de l'écran
-    largeur_ecran, hauteur_ecran = pyautogui.size()
-    x_centre = largeur_ecran // 2
-    y_centre = hauteur_ecran // 2
-    pyautogui.click(x_centre, y_centre)
 
-    # Recherche du bouton boutons_similaires et clic dessus
-    boutons_similaires = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'.mat-raised-button.theme-button')))
-    boutons_similaires.click()
     
     # Appel de la fonction partie()
-    partie()
+
+
+    # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
 
 
 # Ouvre le site https://agora-quiz.education/Games/List en utilisant le navigateur web contrôlé par Selenium WebDriver
@@ -200,14 +230,16 @@ url_actuelle = driver.current_url
 
 # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
 if url_actuelle == "https://agora-quiz.education/Login":
-    connection(idt,motdp)
+    bool=connection(idt,motdp)
     
 # Affiche "lapin" dans la console
 print("lapin")
 
 # Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
-start_partie(idt2)
-
+if bool==True:
+    start_partie(idt2)
+print("fin")
+time.sleep(3)
 # Ferme la connexion à la base de données
 conn.close()
 
