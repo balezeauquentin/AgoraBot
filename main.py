@@ -16,10 +16,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 driver = webdriver.Firefox()
 
-idt = "unlapinrameur"
-motdp = "leslapins"
+idt = "QuantumScribe"
+motdp = ";AgoraBot0"
 
-idt2="QuantumScribe"
+idt2="QBalezeau"
 motdp2=";AgoraBot0"
 conn = sqlite3.connect('QR.db')
 
@@ -85,26 +85,49 @@ def obtenir_reponse(question):
     # Retourne la réponse si elle existe, sinon retourne None
     return result[0] if result else None
 
+def partie():
+    for i in range(3):
+        element_question = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'.question-content b')))
+        soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
+        texte_question = soup.get_text()
+        reponse = obtenir_reponse(texte_question)
+        if reponse:
+            print("Réponse :", reponse)
+            expression_xpath = f'//button[contains(text(), "{reponse}")]'
+            bouton_reponse = driver.find_element(By.XPATH,expression_xpath)
+            bouton_reponse.click()
+        else:
+            boutons_aleatoires = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,'button.mat-raised-button')))
 
+            # Choisis un bouton au hasard parmi ceux trouvés
+            if boutons_aleatoires:
+                bouton_choisi = random.choice(boutons_aleatoires)
+
+                # Clique sur le bouton choisi
+                bouton_choisi.click()
+            else:
+                print("Aucun bouton trouvé")
 # Définition de la fonction connection avec deux arguments idt et motdp
 def connection(idt,motdp):
     
     # Recherche de l'élément identifiant et envoi de la valeur de idt
-    identifiant = driver.find_element(By.ID, "mat-input-0")
+    identifiant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.ID, "mat-input-1")))
     identifiant.send_keys(idt)
     
     # Recherche de l'élément mdp et envoi de la valeur de motdp
-    mdp = driver.find_element(By.ID, "mat-input-1")
+    mdp = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.ID, "mat-input-1")))
     mdp.send_keys(motdp)
     
     # Recherche du bouton_connexion et clic dessus
-    bouton_connexion = driver.find_element(By.CLASS_NAME,"primary-button")
+    bouton_connexion = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.CLASS_NAME,"primary-button")))
+    
     bouton_connexion.click()
     
     # Recherche du bouton_jouer et clic dessus après qu'il soit visible
     bouton_jouer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
     bouton_jouer.click()
 
+    html_content = get_html()
     # Utilise BeautifulSoup pour analyser le code HTML
     soup = BeautifulSoup(html_content, 'html.parser')
 
@@ -148,7 +171,7 @@ def connection(idt,motdp):
 def start_partie(idt2):
 
     # Recherche de l'élément input_adversaire et envoi de la valeur de idt2
-    input_adversaire = WebDriverWait(driver,3).until(EC.presence_of_all_elements_located((By.ID,"mat-input-3")))
+    input_adversaire = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
     input_adversaire.send_keys(idt2)
     
     # Recherche du bouton_inviter et clic dessus
