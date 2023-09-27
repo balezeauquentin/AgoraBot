@@ -31,32 +31,12 @@ driver = webdriver.Firefox()
 idt = "QuantumScribe"
 motdp = ";AgoraBot0"
 
-idt2="hallaine"
+idt2="unlapinrameur"
 motdp2=";AgoraBot0"
 conn = sqlite3.connect('QR.db')
 
 #-------------------------définition des fonctions-------------------------#
 
-def rajouter_sql(question,reponse):
-    # Connexion à la base de données SQLite (ou création si elle n'existe pas)
-    conn = sqlite3.connect('QR.db')
-
-    # Création d'un curseur
-    cursor = conn.cursor()
-
-    # Variables contenant la question et la réponse
-    nouvelle_question = "Quelle est la capitale de la France ?"
-    nouvelle_reponse = "La capitale de la France est Paris."
-
-    # Requête SQL pour insérer la nouvelle entrée
-    requete = "INSERT INTO ma_table (Question, Reponse) VALUES (?, ?)"
-    cursor.execute(requete, (nouvelle_question, nouvelle_reponse))
-
-    # Valide la transaction
-    conn.commit()
-
-    # Ferme la connexion à la base de données
-    conn.close()
 
 
 class Database:
@@ -138,16 +118,19 @@ def phase():
         x_centre = largeur_ecran // 2
         y_centre = hauteur_ecran // 2
         pyautogui.click(x_centre, y_centre)
-        boutons_aleatoires = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'button.mat-raised-button')))
-        time.sleep(2)
+        boutons = driver.find_elements(By.XPATH,
+                                       '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
 
+        # Si au moins un bouton est trouvé
+        if boutons:
+            # Choisir un bouton au hasard parmi les quatre
+            bouton_choisi = random.choice(boutons)
 
-        # Choisis un bouton au hasard parmi ceux trouvés
-        if boutons_aleatoires:
-            bouton_choisi = random.choice(boutons_aleatoires)
+            # Attendre que tous les boutons soient cliquables
 
-            # Clique sur le bouton choisi
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH,'//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
+
+            # Cliquez sur le bouton choisi
             bouton_choisi.click()
             time.sleep(2)
             largeur_ecran, hauteur_ecran = pyautogui.size()
@@ -170,8 +153,9 @@ def partie():
     bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
     if bouton_suivant:
         bouton_suivant.click()
+        print("partie fini a l'autre")
     else:
-        bouton_suivant = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Manche Suivante")]')))
+        bouton_suivant = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Manche Suivante")]')))
         if bouton_suivant:
             bouton_suivant.click()
             partie()
@@ -192,12 +176,12 @@ def connection(idt,motdp):
     bouton_connexion.click()
     # Récupère l'URL actuelle de la page
     url_actuelle = driver.current_url
-
+    WebDriverWait(driver, 10).until(EC.title_is("AgoraQuiz - Accueil du groupe"))
     # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
-    if url_actuelle != "https://agora-quiz.education/Login":
+    if url_actuelle == "https://agora-quiz.education/HomeGroupe":
 
     # Recherche du bouton_jouer et clic dessus après qu'il soit visible
-        bouton_jouer = WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
+        bouton_jouer = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
         bouton_jouer.click()
         return True
     else:
@@ -209,7 +193,7 @@ def connection(idt,motdp):
 def start_partie(idt2):
 
     # Recherche de l'élément input_adversaire et envoi de la valeur de idt2
-    input_adversaire = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
+    input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
     input_adversaire.send_keys(idt2)
     
     # Recherche du bouton_inviter et clic dessus
