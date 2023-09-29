@@ -1,6 +1,5 @@
 # -------------------------importation des modules-------------------------#
 import time
-
 import pyautogui
 import random
 import requests
@@ -13,7 +12,36 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-import sqlite3
+# -------------------définition de la classe Database----------------------#
+
+class Database:
+    def __init__(self, db) -> None:
+        # Initialise la connexion à la db
+        self.db = sqlite3.connect(db)
+        self.cursor = self.db.cursor()
+
+    def insert(self, question, answer) -> None:
+        # Insère une nouvelle question ainsi que sa réponse dans la db
+        self.cursor.execute("INSERT INTO questions(question, answer) VALUES (?, ?)", (question, answer))
+        self.db.commit()
+
+    def check_entry(self, question) -> int:
+        # Vérifie si la question est déjà dans la db
+        self.cursor.execute("SELECT * FROM questions WHERE question=?", (question,))
+        rows = self.cursor.fetchall()
+        if len(rows) > 0:
+            return True
+        return False
+
+    def get_answer(self, question) -> str:
+        # Récupère la réponse à la question dans la db
+        self.cursor.execute("SELECT answer FROM questions WHERE question=?", (question,))
+        rows = self.cursor.fetchall()
+        return rows[0][0]
+
+    def close(self) -> None:
+        # Ferme la connexion à la db
+        self.db.close()
 
 # -------------------------définition des variables-------------------------#
 
@@ -28,38 +56,12 @@ driver = webdriver.Firefox()
 idt = "QuantumScribe"
 motdp = ";AgoraBot0"
 
-idt2 = "unlapinrameur"
+idt2 = "hallaine"
 motdp2 = ";AgoraBot0"
-conn = sqlite3.connect('QR.db')
 
+db = Database('QR.db')
 
 # -------------------------définition des fonctions-------------------------#
-
-
-class Database:
-    def __init__(self, db) -> None:
-        self.db = sqlite3.connect(db)
-        self.cursor = self.db.cursor()
-
-    def insert(self, question, answer) -> None:
-        self.cursor.execute("INSERT INTO questions(question, answer) VALUES (?, ?)", (question, answer))
-        self.db.commit()
-
-    def check_entry(self, question) -> int:
-        self.cursor.execute("SELECT * FROM questions WHERE question=?", (question,))
-        rows = self.cursor.fetchall()
-        if len(rows) > 0:
-            return True
-        return False
-
-    def get_answer(self, question) -> str:
-        self.cursor.execute("SELECT answer FROM questions WHERE question=?", (question,))
-        rows = self.cursor.fetchall()
-        return rows[0][0]
-
-    def close(self) -> None:
-        self.db.close()
-
 
 def get_html():
     url = driver.current_url
@@ -254,7 +256,7 @@ if bool == True:
 print("fin")
 time.sleep(3)
 # Ferme la connexion à la base de données
-conn.close()
+db.close()
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
