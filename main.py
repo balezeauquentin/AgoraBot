@@ -226,13 +226,19 @@ def start_partie(idt2, alternative_idt):
     if url_actuelle != "https://agora-quiz.education/Games/List" and url_actuelle != "https://agora-quiz.education/HomeGroupe":
         partie()
     else:
+        n = 0
         input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
         while(url_actuelle == "https://agora-quiz.education/Games/List"):
             input_adversaire.clear()
-            input_adversaire.send_keys(random.choice(altenative_idt))
+            input_adversaire.send_keys(alternative_idt[n])
             bouton_inviter = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
             bouton_inviter.click()
+            if n == len(alternative_idt):
+                print("tout les utilisateurs sont déjà pris")
+                break
+            n = n + 1
+
         print("erreur lancement de partie")
 
     # Récupération de la taille de l'écran et clic au centre de l'écran
