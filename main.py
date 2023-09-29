@@ -212,7 +212,7 @@ def connection(idt, motdp):
 
 
 # Définition de la fonction start_partie avec un argument idt2
-def start_partie(idt2):
+def start_partie(idt2, alternative_idt):
     # Recherche de l'élément input_adversaire et envoi de la valeur de idt2
     input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
     input_adversaire.send_keys(idt2)
@@ -221,22 +221,19 @@ def start_partie(idt2):
     bouton_inviter = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
     bouton_inviter.click()
+    
     url_actuelle = driver.current_url
     if url_actuelle != "https://agora-quiz.education/Games/List" and url_actuelle != "https://agora-quiz.education/HomeGroupe":
         partie()
     else:
-        bouton_duel = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//button[contains(.,"' + idt2 + '")]')))
-        bouton_duel.click()
-
-        url_actuelle = driver.current_url
-        if url_actuelle != "https://agora-quiz.education/Games/List":
-            # passage debut duel ou on voit les tete
-
-            partie()
-        else:
-            
-            print("erreur lancement de partie")
+        input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
+        while(url_actuelle == "https://agora-quiz.education/Games/List"):
+            input_adversaire.clear()
+            input_adversaire.send_keys(random.choice(altenative_idt))
+            bouton_inviter = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
+            bouton_inviter.click()
+        print("erreur lancement de partie")
 
     # Récupération de la taille de l'écran et clic au centre de l'écran
 
@@ -260,7 +257,7 @@ print("lapin")
 
 # Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
 if bool == True:
-    start_partie(idt2)
+    start_partie(idt2, altenative_idt)
 print("fin")
 time.sleep(3)
 # Ferme la connexion à la base de données
