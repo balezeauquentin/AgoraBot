@@ -46,18 +46,18 @@ class Database:
 # -------------------------définition des variables-------------------------#
 
 driver = webdriver.Firefox()
-# idt = "unlapinrameur"
-# motdp = ";leslapins"
 
-# idt2="QuantumScribe"
-# motdp2=";AgoraBot0"
+# --------------BOT 1--------------#
+idt = "unlapinrameur"
+motdp = "leslapins"
 
+# --------------BOT 2--------------#
+idt2="QuantumScribe"
+motdp2=";AgoraBot0"
 
-idt = "QuantumScribe"
-motdp = ";AgoraBot0"
+# ------Alternative users----------#
+altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas","SuperTimCraft")
 
-idt2 = "hallaine"
-motdp2 = ";AgoraBot0"
 
 db = Database('QR.db')
 
@@ -90,10 +90,10 @@ def get_html():
 # Définition de la fonction obtenir_reponse avec un argument question
 
 def phase():
-    element_question = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, '.question-content b')))
+    element_question = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.question-content b')))
     soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
     texte_question = soup.get_text()
+    
     # reponse = obtenir_reponse(texte_question)
     reponse = None
     if reponse:
@@ -102,23 +102,18 @@ def phase():
         bouton_reponse = driver.find_element(By.XPATH, expression_xpath)
         bouton_reponse.click()
     else:
-
-        boutons = driver.find_elements(By.XPATH,
-                                       '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
-
+        boutons = driver.find_elements(By.XPATH,'//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
         # Si au moins un bouton est trouvé
         if boutons:
             # Choisir un bouton au hasard parmi les quatre
             bouton_choisi = random.choice(boutons)
-
+            
             # Attendre que tous les boutons soient cliquables
-
             WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
                 (By.XPATH, '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
 
             # Cliquez sur le bouton choisi
             bouton_choisi.click()
-
         else:
             print("Aucun bouton trouvé")
 
@@ -128,8 +123,10 @@ def partie():
         print("on est la")
         bouton_versus = WebDriverWait(driver, 3).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'main-container')))
+        
         WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CLASS_NAME, 'main-container')))
+        
         bouton_versus.click()
         driver.execute_script('document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2).click();')
         print("ca passe")
@@ -137,6 +134,7 @@ def partie():
 
         boutons_similaires = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.mat-raised-button.theme-button')))
+        
         boutons_similaires.click()
         for i in range(3):
             phase()
@@ -145,29 +143,35 @@ def partie():
         try:
             bouton_fermer = WebDriverWait(driver, 3).until(
                 EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Fermer")]')))
+            
             if bouton_fermer:
                 bouton_fermer.click()
+                
         finally:
             bouton_suivant = WebDriverWait(driver, 5).until(
                 EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
             bouton_suivant.click()
+            
             try:
                 bouton_retour = WebDriverWait(driver, 3).until(
                     EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
+                
                 if bouton_retour:
                     bouton_retour.click()
                 print("partie fini a l'autre")
+                
             except:
                 try:
                     bouton_manche = WebDriverWait(driver, 10).until(
                         EC.visibility_of_element_located((By.XPATH, '//button[contains(.," Manche Suivante ")]')))
+                    
                     if bouton_manche:
                         bouton_manche.click()
                         partie()
+                        
                 except:
-
                     print("erreur")
-                
+                    
             finally:
                 print("fin partie")
                 return
@@ -231,6 +235,7 @@ def start_partie(idt2):
 
             partie()
         else:
+            
             print("erreur lancement de partie")
 
     # Récupération de la taille de l'écran et clic au centre de l'écran
