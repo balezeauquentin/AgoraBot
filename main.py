@@ -148,7 +148,7 @@ def partie():
             if bouton_fermer:
                 bouton_fermer.click()
         finally:
-            bouton_suivant = WebDriverWait(driver, 3).until(
+            bouton_suivant = WebDriverWait(driver, 5).until(
                 EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
             bouton_suivant.click()
             try:
@@ -167,8 +167,10 @@ def partie():
                 except:
 
                     print("erreur")
+                
             finally:
                 print("fin partie")
+                return
 
 
 # Définition de la fonction connection avec deux arguments idt et motdp
@@ -186,8 +188,9 @@ def connection(idt, motdp):
     bouton_connexion = driver.find_element(By.CLASS_NAME, "primary-button")
     bouton_connexion.click()
     # Récupère l'URL actuelle de la page
-    url_actuelle = driver.current_url
+
     WebDriverWait(driver, 10).until(EC.title_is("AgoraQuiz - Accueil du groupe"))
+    url_actuelle = driver.current_url
     print(url_actuelle)
     # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
     if url_actuelle == "https://agora-quiz.education/HomeGroupe":
