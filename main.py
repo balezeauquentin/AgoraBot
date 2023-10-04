@@ -50,12 +50,12 @@ class Database:
 driver = webdriver.Firefox()
 
 # --------------BOT 1--------------#
-idt2 = "hallaine"
-motdp2 = "leslapins"
+idt = "unlapinrameur"
+motdp = "leslapins"
 
 # --------------BOT 2--------------#
-idt = "QuantumScribe"
-motdp = ";AgoraBot0"
+idt2 = "QuantumScribe"
+motdp2 = ";AgoraBot0"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -103,9 +103,15 @@ def phase():
     if reponse:
         print("je l'ai")
         print("Réponse :", reponse)
-        bonne_reponse=db.get_answer(texte_question)
-        expression_xpath = f'//button[contains(text(), "{bonne_reponse}")]'
-        bouton_reponse = driver.find_element(By.XPATH, expression_xpath)
+        bonne_reponse = db.get_answer(texte_question)
+        expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
+        #'//button[contains(.,"Inviter")]'
+
+        bouton_reponse = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+            (By.XPATH,
+             expression_xpath)))
+
         if bouton_reponse:
             bouton_reponse.click()
         else:
@@ -310,7 +316,27 @@ if bool == True:
 print("fin")
 time.sleep(3)
 # Ferme la connexion à la base de données
-db.close()
+
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
+driver = webdriver.Firefox()
+driver.get('https://agora-quiz.education/Games/List')
+
+# Récupère l'URL actuelle de la page
+url_actuelle = driver.current_url
+
+# Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
+if url_actuelle == "https://agora-quiz.education/Login":
+    bool = connection(idt2, motdp2)
+
+# Affiche "lapin" dans la console
+print("lapin")
+
+# Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
+if bool == True:
+    start_partie(idt, altenative_idt)
+print("fin")
+time.sleep(3)
+
+db.close()
