@@ -151,7 +151,9 @@ def phase():
             EC.presence_of_element_located((By.CSS_SELECTOR, 'button.response-true')))
 
         reponse_a_rajouter = button.text
-        print(texte_question + " \n" + reponse_a_rajouter)
+        print("Apprentissage:")
+        print(texte_question)
+        print(reponse_a_rajouter)
         db.insert(texte_question, reponse_a_rajouter)
 
 
@@ -338,5 +340,6 @@ if bool == True:
     start_partie(idt, altenative_idt)
 print("fin")
 time.sleep(3)
+driver.quit()
 
 db.close()
