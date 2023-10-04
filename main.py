@@ -105,7 +105,7 @@ def phase():
         print("Réponse :", reponse)
         bonne_reponse = db.get_answer(texte_question)
         expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
-        #'//button[contains(.,"Inviter")]'
+        # '//button[contains(.,"Inviter")]'
 
         bouton_reponse = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
@@ -274,23 +274,33 @@ def start_partie(idt2, alternative_idt):
                 EC.presence_of_element_located((By.XPATH, uwu)))
             bouton_partiedejala.click()
             partie()
+
         else:
-            n = 0
-            input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
+            # reprendre une partie aleatoire
 
-            while driver.current_url == "https://agora-quiz.education/Games/List":
-                input_adversaire.clear()
-                input_adversaire.send_keys(alternative_idt[n])
-                bouton_inviter = WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
-                bouton_inviter.click()
-                if n == len(alternative_idt):
-                    print("tout les utilisateurs sont déjà pris")
-                    break
-                n = n + 1
-                time.sleep(1)
+            bouton_reprise = WebDriverWait(driver, 10).until(
+                EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".succes-div")))
+            if bouton_reprise.click():
+                bouton_reprise.click()
+            else:
 
-            print("erreur lancement de partie")
+                n = 0
+                input_adversaire = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.ID, "mat-input-3")))
+
+                while driver.current_url == "https://agora-quiz.education/Games/List":
+                    input_adversaire.clear()
+                    input_adversaire.send_keys(alternative_idt[n])
+                    bouton_inviter = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
+                    bouton_inviter.click()
+                    if n == len(alternative_idt):
+                        print("tout les utilisateurs sont déjà pris")
+                        break
+                    n = n + 1
+                    time.sleep(1)
+
+                print("erreur lancement de partie")
 
     # Récupération de la taille de l'écran et clic au centre de l'écran
 
