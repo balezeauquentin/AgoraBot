@@ -50,7 +50,7 @@ class Database:
 driver = webdriver.Firefox()
 
 # --------------BOT 1--------------#
-idt2 = "unlapinrameur"
+idt2 = "hallaine"
 motdp2 = "leslapins"
 
 # --------------BOT 2--------------#
@@ -98,12 +98,32 @@ def phase():
     texte_question = soup.get_text()
 
     # reponse = obtenir_reponse(texte_question)
-    reponse = None
+    reponse = db.check_entry(texte_question)
+
     if reponse:
+        print("je l'ai")
         print("Réponse :", reponse)
-        expression_xpath = f'//button[contains(text(), "{reponse}")]'
+        bonne_reponse=db.get_answer(texte_question)
+        expression_xpath = f'//button[contains(text(), "{bonne_reponse}")]'
         bouton_reponse = driver.find_element(By.XPATH, expression_xpath)
-        bouton_reponse.click()
+        if bouton_reponse:
+            bouton_reponse.click()
+        else:
+            boutons = driver.find_elements(By.XPATH,
+                                           '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+            # Si au moins un bouton est trouvé
+            if boutons:
+                # Choisir un bouton au hasard parmi les quatre
+                bouton_choisi = random.choice(boutons)
+
+                # Attendre que tous les boutons soient cliquables
+                WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+                    (By.XPATH,
+                     '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
+
+                # Cliquez sur le bouton choisi
+                bouton_choisi.click()
+
     else:
         boutons = driver.find_elements(By.XPATH,
                                        '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
@@ -120,6 +140,13 @@ def phase():
             bouton_choisi.click()
         else:
             print("Aucun bouton trouvé")
+    if reponse == False:
+        button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'button.response-true')))
+
+        reponse_a_rajouter = button.text
+        print(texte_question + " \n" + reponse_a_rajouter)
+        db.insert(texte_question, reponse_a_rajouter)
 
 
 def partie():
@@ -230,20 +257,32 @@ def start_partie(idt2, alternative_idt):
     if url_actuelle != "https://agora-quiz.education/Games/List" and url_actuelle != "https://agora-quiz.education/HomeGroupe":
         partie()
     else:
-        n = 0
-        input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
-        while (url_actuelle == "https://agora-quiz.education/Games/List"):
-            input_adversaire.clear()
-            input_adversaire.send_keys(alternative_idt[n])
+        uwu = '//button[contains(.,"' + idt2 + '")]'
+        bouton_partiedejala = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, uwu)))
+        if bouton_partiedejala:
+            uwu = '//button[contains(.,"' + idt2 + '")]'
             bouton_inviter = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
-            bouton_inviter.click()
-            if n == len(alternative_idt):
-                print("tout les utilisateurs sont déjà pris")
-                break
-            n = n + 1
+                EC.presence_of_element_located((By.XPATH, uwu)))
+            bouton_partiedejala.click()
+            partie()
+        else:
+            n = 0
+            input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
 
-        print("erreur lancement de partie")
+            while driver.current_url == "https://agora-quiz.education/Games/List":
+                input_adversaire.clear()
+                input_adversaire.send_keys(alternative_idt[n])
+                bouton_inviter = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
+                bouton_inviter.click()
+                if n == len(alternative_idt):
+                    print("tout les utilisateurs sont déjà pris")
+                    break
+                n = n + 1
+                time.sleep(1)
+
+            print("erreur lancement de partie")
 
     # Récupération de la taille de l'écran et clic au centre de l'écran
 
