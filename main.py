@@ -50,12 +50,12 @@ class Database:
 driver = webdriver.Firefox()
 
 # --------------BOT 1--------------#
-idt = "unlapinrameur"
-motdp = "leslapins"
+idt2 = "unlapinrameur"
+motdp2 = "leslapins"
 
 # --------------BOT 2--------------#
-idt2 = "QuantumScribe"
-motdp2 = ";AgoraBot0"
+idt = "QuantumScribe"
+motdp = ";AgoraBot0"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
