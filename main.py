@@ -318,12 +318,13 @@ url_actuelle = driver.current_url
 # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
 if url_actuelle == "https://agora-quiz.education/Login":
     bool = connection(idt, motdp)
-
+else:
+    bool = False
 # Affiche "lapin" dans la console
 print("lapin")
 
 # Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
-if bool == True:
+if bool:
     start_partie(idt2, altenative_idt)
 print("fin")
 time.sleep(3)
@@ -340,13 +341,15 @@ url_actuelle = driver.current_url
 
 # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
 if url_actuelle == "https://agora-quiz.education/Login":
-    bool = connection(idt2, motdp2)
+    bool2 = connection(idt2, motdp2)
+else:
+    bool2 = False
 
 # Affiche "lapin" dans la console
 print("lapin")
 
 # Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
-if bool == True:
+if bool2:
     start_partie(idt, altenative_idt)
 print("fin")
 time.sleep(3)
