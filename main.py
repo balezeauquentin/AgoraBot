@@ -12,7 +12,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-
 # -------------------définition de la classe Database----------------------#
 
 class Database:
@@ -44,10 +43,10 @@ class Database:
         # Ferme la connexion à la db
         self.db.close()
 
-
 # -------------------------définition des variables-------------------------#
 
 driver = webdriver.Firefox()
+db = Database('QR.db')
 
 # --------------BOT 1--------------#
 idt = "unlapinrameur"
@@ -60,34 +59,25 @@ motdp2 = ";AgoraBot0"
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
 
-db = Database('QR.db')
-
-
 # -------------------------définition des fonctions-------------------------#
 
 def get_html():
     url = driver.current_url
     response = requests.get(url)
-
     # Vérifie si la requête a réussi
     if response.status_code == 200:
         # Obtient le contenu de la page web
         html_content = response.text
-
         # Utilise BeautifulSoup pour analyser le code HTML
         soup = BeautifulSoup(html_content, 'html.parser')
-
         # Obtient le code HTML complet sous forme de chaîne de caractères avec l'indentation (prettify)
         html_string = soup.prettify()
-
         # Maintenant, html_string contient tout le code HTML de la page web
         print(html_string)
         return html_string
-
     else:
         print('La requête a échoué avec le code de statut :', response.status_code)
         return None
-
 
 # Définition de la fonction obtenir_reponse avec un argument question
 
@@ -99,8 +89,6 @@ def phase():
     soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
     texte_question = soup.get_text()
     print("Question :", texte_question)
-
-    # reponse = obtenir_reponse(texte_question)
     reponse = db.check_entry(texte_question)
 
     if reponse:
@@ -109,7 +97,6 @@ def phase():
         bonne_reponse = db.get_answer(texte_question)
         bonne_reponse = bonne_reponse.replace('"', '\\"')
         expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
-        # '//button[contains(.,"Inviter")]'
 
         bouton_reponse = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
@@ -128,15 +115,13 @@ def phase():
 
                 # Attendre que tous les boutons soient cliquables
                 WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH,
-                     '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
+                    (By.XPATH,'//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
 
                 # Cliquez sur le bouton choisi
                 bouton_choisi.click()
 
     else:
-        boutons = driver.find_elements(By.XPATH,
-                                       '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+        boutons = driver.find_elements(By.XPATH,'//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
         # Si au moins un bouton est trouvé
         if boutons:
             # Choisir un bouton au hasard parmi les quatre
@@ -153,13 +138,11 @@ def phase():
     if reponse == False:
         button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'button.response-true')))
-
         reponse_a_rajouter = button.text
         print("Apprentissage:")
         print(texte_question)
         print(reponse_a_rajouter)
         db.insert(texte_question, reponse_a_rajouter)
-
 
 def partie():
     try:
@@ -182,8 +165,6 @@ def partie():
         boutons_similaires.click()
         for i in range(3):
             phase()
-            #time.sleep(4)
-        # apprantisage()
         try:
             bouton_fermer = WebDriverWait(driver, 5).until(
                 EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Fermer")]')))
@@ -219,7 +200,6 @@ def partie():
             finally:
                 print("fin partie")
                 return
-
 
 # Définition de la fonction connection avec deux arguments idt et motdp
 
@@ -279,20 +259,16 @@ def start_partie(idt2, alternative_idt):
                 EC.presence_of_element_located((By.XPATH, uwu)))
             bouton_partiedejala.click()
             partie()
-
         else:
             # reprendre une partie aleatoire
-
             bouton_reprise = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".succes-div")))
             if bouton_reprise.click():
                 bouton_reprise.click()
             else:
-
                 n = 0
                 input_adversaire = WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.ID, "mat-input-3")))
-
                 while driver.current_url == "https://agora-quiz.education/Games/List":
                     input_adversaire.clear()
                     input_adversaire.send_keys(alternative_idt[n])
@@ -304,7 +280,6 @@ def start_partie(idt2, alternative_idt):
                         break
                     n = n + 1
                     time.sleep(1)
-
                 print("erreur lancement de partie")
 
     # Récupération de la taille de l'écran et clic au centre de l'écran
@@ -333,11 +308,9 @@ if bool:
     start_partie(idt2, altenative_idt)
 print("fin")
 
-# Ferme la connexion à la base de données
-
-
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
+
 driver = webdriver.Firefox()
 driver.get('https://agora-quiz.education/Games/List')
 
@@ -358,6 +331,7 @@ if bool2:
     start_partie(idt, altenative_idt)
 print("fin")
 
+# Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
-
+# Ferme la db
 db.close()
