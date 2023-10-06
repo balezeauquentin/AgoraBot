@@ -107,6 +107,7 @@ def phase():
         print("je l'ai")
         print("Réponse :", reponse)
         bonne_reponse = db.get_answer(texte_question)
+        bonne_reponse = bonne_reponse.replace('"', '\\"')
         expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
         # '//button[contains(.,"Inviter")]'
 
@@ -163,13 +164,14 @@ def phase():
 def partie():
     try:
         print("on est la")
-        bouton_versus = WebDriverWait(driver, 3).until(
+        bouton_versus = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'main-container')))
 
         WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CLASS_NAME, 'main-container')))
 
         bouton_versus.click()
+  
         driver.execute_script('document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2).click();')
         print("ca passe")
     finally:
@@ -183,7 +185,7 @@ def partie():
             #time.sleep(4)
         # apprantisage()
         try:
-            bouton_fermer = WebDriverWait(driver, 3).until(
+            bouton_fermer = WebDriverWait(driver, 5).until(
                 EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Fermer")]')))
 
             if bouton_fermer:
@@ -195,7 +197,7 @@ def partie():
             bouton_suivant.click()
 
             try:
-                bouton_retour = WebDriverWait(driver, 3).until(
+                bouton_retour = WebDriverWait(driver, 5).until(
                     EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
 
                 if bouton_retour:
