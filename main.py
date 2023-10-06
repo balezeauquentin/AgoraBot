@@ -47,14 +47,15 @@ class Database:
 
 driver = webdriver.Firefox()
 db = Database('QR.db')
+connected_user = ""
 
 # --------------BOT 1--------------#
-idt2 = "unlapinrameur"
-motdp2 = "leslapins"
+idt = "unlapinrameur"
+motdp = "leslapins"
 
 # --------------BOT 2--------------#
-idt = "QuantumScribe"
-motdp = ";AgoraBot0"
+idt2 = "QuantumScribe"
+motdp2 = ";AgoraBot0"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -204,6 +205,7 @@ def partie():
 # Définition de la fonction connection avec deux arguments idt et motdp
 
 def connection(idt, motdp):
+    global connected_user
     # Recherche de l'élément identifiant et envoi de la valeur de idt
     identifiant = driver.find_element(By.ID, "mat-input-0")
     identifiant.send_keys(idt)
@@ -222,7 +224,7 @@ def connection(idt, motdp):
     print(url_actuelle)
     # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
     if url_actuelle == "https://agora-quiz.education/HomeGroupe":
-
+        connected_user = idt
         # Recherche du bouton_jouer et clic dessus après qu'il soit visible
         bouton_jouer = WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Jouer des Parties")]')))
@@ -288,30 +290,75 @@ def start_partie(idt2, alternative_idt):
 
     # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
 
+def bot(id, mdp, id2):
+    # Récupère l'URL actuelle de la page
+    url_actuelle = driver.current_url
 
-# Ouvre le site https://agora-quiz.education/Games/List en utilisant le navigateur web contrôlé par Selenium WebDriver
+    # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
+    if url_actuelle == "https://agora-quiz.education/Login":
+        bool = connection(id, mdp)
+    else:
+        bool = False
+    # Affiche "lapin" dans la console
+    print("lapin")
+
+    # Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
+    if bool:
+        start_partie(idt2, altenative_idt)
+    print("fin")
+
+def choose_user():
+    global connected_user
+    if connected_user == idt:
+        bot(idt2, motdp2, idt)
+    else:
+        bot(idt, motdp, idt2)
+
+
+# PROGRAMME PRINCIPAL
+
+# Bot 1
 driver.get('https://agora-quiz.education/Games/List')
+bot(idt, motdp, idt2)
+driver.quit()
+# Bot 2
+driver = webdriver.Firefox()
+driver.get('https://agora-quiz.education/Games/List')
+choose_user()
+driver.quit()
 
-# Récupère l'URL actuelle de la page
-url_actuelle = driver.current_url
+"""
+NOUVELLE SOLUTION POUR BOT 2 (déconnexion et reconnexion)
 
-# Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
-if url_actuelle == "https://agora-quiz.education/Login":
-    bool = connection(idt, motdp)
+# Déconnecte le premier bot
+bouton_fermer = WebDriverWait(driver, 5).until(
+    EC.visibility_of_element_located((By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
+if bouton_fermer:
+    bouton_fermer.click()
+    bouton_deconnexion = WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located((By.XPATH, '//a[contains(.,"Déconnexion")]')))
+    if bouton_deconnexion:
+        bouton_deconnexion.click()
+        print("déconnexion")
+        choose_user()
+    else:
+        print("erreur déconnexion")
 else:
-    bool = False
-# Affiche "lapin" dans la console
-print("lapin")
-
-# Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
-if bool:
-    start_partie(idt2, altenative_idt)
-print("fin")
+    print("erreur déconnexion")
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
+"""
+
+
+
+
+"""
+ANCIENNE SOLUTION POUR BOT 2 (fermeture du navigateur et réouverture)
 
 driver = webdriver.Firefox()
+
+# Ouvre le site https://agora-quiz.education/Games/List en utilisant le navigateur web contrôlé par Selenium WebDriver
 driver.get('https://agora-quiz.education/Games/List')
 
 # Récupère l'URL actuelle de la page
@@ -333,5 +380,7 @@ print("fin")
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
+"""
+
 # Ferme la db
 db.close()
