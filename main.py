@@ -165,10 +165,10 @@ def partie():
     try:
         print("on est la")
         bouton_versus = WebDriverWait(driver, 5).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'main-container')))
+            EC.presence_of_element_located((By.XPATH, '//b[contains(text(), "VS")]')))
 
         WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, 'main-container')))
+            EC.element_to_be_clickable((By.XPATH, '//b[contains(text(), "VS")]')))
 
         bouton_versus.click()
   
