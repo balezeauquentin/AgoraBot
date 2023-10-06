@@ -50,12 +50,12 @@ class Database:
 driver = webdriver.Firefox()
 
 # --------------BOT 1--------------#
-idt2 = "unlapinrameur"
-motdp2 = "leslapins"
+idt = "unlapinrameur"
+motdp = "leslapins"
 
 # --------------BOT 2--------------#
-idt = "QuantumScribe"
-motdp = ";AgoraBot0"
+idt2 = "QuantumScribe"
+motdp2 = ";AgoraBot0"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -92,10 +92,13 @@ def get_html():
 # Définition de la fonction obtenir_reponse avec un argument question
 
 def phase():
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//i[contains(.,"Rédigée par :")]')))
+    driver.execute_script('document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2).click();')
     element_question = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, '.question-content b')))
     soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
     texte_question = soup.get_text()
+    print("Question :", texte_question)
 
     # reponse = obtenir_reponse(texte_question)
     reponse = db.check_entry(texte_question)
@@ -177,7 +180,7 @@ def partie():
         boutons_similaires.click()
         for i in range(3):
             phase()
-            time.sleep(4)
+            #time.sleep(4)
         # apprantisage()
         try:
             bouton_fermer = WebDriverWait(driver, 3).until(
@@ -188,7 +191,7 @@ def partie():
 
         finally:
             bouton_suivant = WebDriverWait(driver, 5).until(
-                EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
+                EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
             bouton_suivant.click()
 
             try:
@@ -327,7 +330,7 @@ print("lapin")
 if bool:
     start_partie(idt2, altenative_idt)
 print("fin")
-time.sleep(3)
+
 # Ferme la connexion à la base de données
 
 
@@ -352,7 +355,7 @@ print("lapin")
 if bool2:
     start_partie(idt, altenative_idt)
 print("fin")
-time.sleep(3)
+
 driver.quit()
 
 db.close()
