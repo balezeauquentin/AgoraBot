@@ -96,7 +96,7 @@ def phase():
         print("je l'ai")
         print("Réponse :", reponse)
         bonne_reponse = db.get_answer(texte_question)
-        bonne_reponse = bonne_reponse.replace('"', '\\"')
+        bonne_reponse = bonne_reponse.replace('"', '\"')
         expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
 
         bouton_reponse = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
@@ -207,11 +207,11 @@ def partie():
 def connection(idt, motdp):
     global connected_user
     # Recherche de l'élément identifiant et envoi de la valeur de idt
-    identifiant = driver.find_element(By.ID, "mat-input-0")
+    identifiant = driver.find_element(By.CSS_SELECTOR, "input[formcontrolname='username']")
     identifiant.send_keys(idt)
 
     # Recherche de l'élément mdp et envoi de la valeur de motdp
-    mdp = driver.find_element(By.ID, "mat-input-1")
+    mdp = driver.find_element(By.CSS_SELECTOR, "input[formcontrolname='password']")
     mdp.send_keys(motdp)
 
     # Recherche du bouton_connexion et clic dessus
@@ -317,18 +317,16 @@ def choose_user():
 
 # PROGRAMME PRINCIPAL
 
+
 # Bot 1
 driver.get('https://agora-quiz.education/Games/List')
-bot(idt, motdp, idt2)
-driver.quit()
-# Bot 2
-driver = webdriver.Firefox()
-driver.get('https://agora-quiz.education/Games/List')
 choose_user()
-driver.quit()
-
-"""
-NOUVELLE SOLUTION POUR BOT 2 (déconnexion et reconnexion)
+#driver.quit()
+# Bot 2
+#driver = webdriver.Firefox()
+#driver.get('https://agora-quiz.education/Games/List')
+#choose_user()
+#driver.quit()
 
 # Déconnecte le premier bot
 bouton_fermer = WebDriverWait(driver, 5).until(
@@ -348,7 +346,6 @@ else:
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
-"""
 
 
 
