@@ -50,12 +50,12 @@ db = Database('QR.db')
 connected_user = ""
 
 # --------------BOT 1--------------#
-idt = "unlapinrameur"
-motdp = "leslapins"
+idt2 = "unlapinrameur"
+motdp2 = "leslapins"
 
 # --------------BOT 2--------------#
-idt2 = "QuantumScribe"
-motdp2 = ";AgoraBot0"
+idt = "QuantumScribe"
+motdp = ";AgoraBot0"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -215,10 +215,12 @@ def connection(idt, motdp):
     mdp.send_keys(motdp)
 
     # Recherche du bouton_connexion et clic dessus
-    bouton_connexion = driver.find_element(By.CLASS_NAME, "primary-button")
+    print("j'essaye de me connecter")
+    time.sleep(1)
+    bouton_connexion = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "primary-button")))
     bouton_connexion.click()
     # Récupère l'URL actuelle de la page
-
+    print("Connected")
     WebDriverWait(driver, 10).until(EC.title_is("AgoraQuiz - Accueil du groupe"))
     url_actuelle = driver.current_url
     print(url_actuelle)
@@ -240,7 +242,7 @@ def connection(idt, motdp):
 # Définition de la fonction start_partie avec un argument idt2
 def start_partie(idt2, alternative_idt):
     # Recherche de l'élément input_adversaire et envoi de la valeur de idt2
-    input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "mat-input-3")))
+    input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[data-placeholder="Nom de l\'adversaire"]')))
     input_adversaire.send_keys(idt2)
 
     # Recherche du bouton_inviter et clic dessus
@@ -304,7 +306,7 @@ def bot(id, mdp, id2):
 
     # Appelle la fonction start_partie avec l'argument idt2 pour commencer une partie
     if bool:
-        start_partie(idt2, altenative_idt)
+        start_partie(id2, altenative_idt)
     print("fin")
 
 def choose_user():
@@ -315,34 +317,28 @@ def choose_user():
         bot(idt, motdp, idt2)
 
 
+
+
+
 # PROGRAMME PRINCIPAL
 
-
-# Bot 1
-driver.get('https://agora-quiz.education/Games/List')
-choose_user()
-#driver.quit()
-# Bot 2
-#driver = webdriver.Firefox()
-#driver.get('https://agora-quiz.education/Games/List')
-#choose_user()
-#driver.quit()
-
-# Déconnecte le premier bot
-bouton_fermer = WebDriverWait(driver, 5).until(
-    EC.visibility_of_element_located((By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
-if bouton_fermer:
-    bouton_fermer.click()
-    bouton_deconnexion = WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located((By.XPATH, '//a[contains(.,"Déconnexion")]')))
-    if bouton_deconnexion:
-        bouton_deconnexion.click()
-        print("déconnexion")
-        choose_user()
+while(100):
+    driver.get('https://agora-quiz.education/Games/List')
+    choose_user()
+    bouton_fermer = WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
+    if bouton_fermer:
+        bouton_fermer.click()
+        bouton_deconnexion = WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located((By.XPATH, '//a[contains(.,"Déconnexion")]')))
+        if bouton_deconnexion:
+            bouton_deconnexion.click()
+            print("déconnexion")
+            choose_user()
+        else:
+            print("erreur déconnexion")
     else:
         print("erreur déconnexion")
-else:
-    print("erreur déconnexion")
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
