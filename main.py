@@ -50,12 +50,12 @@ db = Database('QR.db')
 connected_user = ""
 
 # --------------BOT 1--------------#
-idt2 = "unlapinrameur"
-motdp2 = "leslapins"
+idt = "unlapinrameur"
+motdp = "leslapins"
 
 # --------------BOT 2--------------#
-idt = "QuantumScribe"
-motdp = ";AgoraBot0"
+idt2 = "QuantumScribe"
+motdp2 = ";AgoraBot0"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -322,7 +322,7 @@ def choose_user():
 
 # PROGRAMME PRINCIPAL
 
-while(100):
+while(10):
     driver.get('https://agora-quiz.education/Games/List')
     choose_user()
     bouton_fermer = WebDriverWait(driver, 5).until(
