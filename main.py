@@ -49,13 +49,21 @@ driver = webdriver.Firefox()
 db = Database('QR.db')
 connected_user = ""
 
-# --------------BOT 1--------------#
-idt2 = "unlapinrameur"
-motdp2 = "leslapins"
+# # --------------BOT 1--------------#
+# idt2 = "unlapinrameur"
+# motdp2 = "leslapins"
 
-# --------------BOT 2--------------#
-idt = "QuantumScribe"
-motdp = ";AgoraBot0"
+# # --------------BOT 2--------------#
+# idt = "QuantumScribe"
+# motdp = ";AgoraBot0"
+
+# --------------BOT 3--------------#
+idt = "unchat"
+motdp= "deuxchat"
+
+# --------------BOT 4--------------#
+idt2 = "unchien"
+motdp2   = "deuxchien"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
