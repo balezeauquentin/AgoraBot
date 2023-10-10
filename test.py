@@ -10,13 +10,24 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+import threading
 
 idt = "unlapinrameur"
 motdp = "leslapins"
 
-print("hello world")
-driver = webdriver.Firefox()
-driver.get('https://agora-quiz.education/Games/List')
-element = driver.find_element(By.CSS_SELECTOR, "input[formcontrolname='username']")
-element.send_keys("lapin")
-driver.quit()
+
+def bonjour():
+    print("hello world")
+
+
+thread1 = threading.Thread(target=bonjour())
+thread2 = threading.Thread(target=bonjour())
+thread3 = threading.Thread(target=bonjour())
+thread4 = threading.Thread(target=bonjour())
+
+
+# driver = webdriver.Firefox()
+# driver.get('https://agora-quiz.education/Games/List')
+# element = driver.find_element(By.CSS_SELECTOR, "input[formcontrolname='username']")
+# element.send_keys("lapin")
+# driver.quit()
