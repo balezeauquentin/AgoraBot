@@ -43,7 +43,7 @@ class Database:
         self.db.close()
 
 
-def phase(driver):
+def phase(driver,db):
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//i[contains(.,"Rédigée par :")]')))
     driver.execute_script('document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2).click();')
     element_question = WebDriverWait(driver, 10).until(
@@ -104,7 +104,7 @@ def phase(driver):
         db.insert(texte_question, reponse_a_rajouter)
 
 
-def partie(driver):
+def partie(driver,db):
     try:
         print("on est la")
         bouton_versus = WebDriverWait(driver, 5).until(
@@ -124,7 +124,7 @@ def partie(driver):
 
         boutons_similaires.click()
         for i in range(3):
-            phase(driver)
+            phase(driver,db)
         try:
             bouton_fermer = WebDriverWait(driver, 5).until(
                 EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Fermer")]')))
@@ -152,7 +152,7 @@ def partie(driver):
 
                     if bouton_manche:
                         bouton_manche.click()
-                        partie(driver)
+                        partie(driver,db)
 
                 except:
                     print("erreur")
@@ -162,7 +162,7 @@ def partie(driver):
                 return
 
 
-def start_partie(idt2, alternative_idt, driver):
+def start_partie(idt2, alternative_idt, driver,db):
     # Recherche de l'élément input_adversaire et envoi de la valeur de idt2
     input_adversaire = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, 'input[data-placeholder="Nom de l\'adversaire"]')))
@@ -175,7 +175,7 @@ def start_partie(idt2, alternative_idt, driver):
 
     url_actuelle = driver.current_url
     if url_actuelle != "https://agora-quiz.education/Games/List" and url_actuelle != "https://agora-quiz.education/HomeGroupe":
-        partie(driver)
+        partie(driver,db)
     else:
         uwu = '//button[contains(.,"' + idt2 + '")]'
         bouton_partiedejala = WebDriverWait(driver, 10).until(
@@ -185,7 +185,7 @@ def start_partie(idt2, alternative_idt, driver):
             bouton_inviter = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, uwu)))
             bouton_partiedejala.click()
-            partie(driver)
+            partie(driver,db)
         else:
             # reprendre une partie aleatoire
             bouton_reprise = WebDriverWait(driver, 10).until(
@@ -245,6 +245,7 @@ def connection(idt, motdp, driver):
         print("erreur connection")
         return False
 
+
 def deconnection(driver):
     bouton_fermer = WebDriverWait(driver, 5).until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
@@ -260,17 +261,22 @@ def deconnection(driver):
             print("erreur déconnexion")
     else:
         print("erreur déconnexion")
+
+
 def principal(idt1, idt2, mdp1, mdp2, alternative):
+    db = Database('QR.db')
     print("hello world 1")
     driver = webdriver.Firefox()
     driver.get('https://agora-quiz.education/Games/List')
     connection(idt1, mdp1, driver)
-    start_partie(idt2, alternative, driver)
+    start_partie(idt2, alternative, driver,db)
     deconnection(driver)
     print("hello world 2")
     connection(idt2, mdp2, driver)
-    start_partie(idt1,alternative,driver)
+    start_partie(idt1, alternative, driver,db)
     deconnection(driver)
+    db.close()
+
 
 # --------------BOT 1--------------#
 idt1 = "unlapinrameur"
@@ -282,23 +288,45 @@ motdp2 = ";AgoraBot0"
 
 # --------------BOT 3--------------#
 idt3 = "unchat"
-motdp3= "deuxchat"
+motdp3 = "deuxchat"
 
 # --------------BOT 4--------------#
 idt4 = "unchien"
 motdp4 = "deuxchien"
 
+def inverse(idt1,idt2,motdp1,motdp2):
+    idt1,idt2 = idt2,idt1
+    motdp1,motdp2 = motdp2,motdp1
+    return idt1,idt2,motdp1,motdp2
+# idt1,idt2,motdp1,motdp2 = inverse(idt1,idt2,motdp1,motdp2)
+idt3,idt4,motdp3,motdp4 = inverse(idt3,idt4,motdp3,motdp4)
+
+
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
 
-db = Database('QR.db')
+
+bot1 = threading.Thread(target=principal,args=(idt1, idt2, motdp1, motdp2, altenative_idt))
+bot2 = threading.Thread(target=principal,args=(idt3, idt4, motdp3, motdp4, altenative_idt))
+bot1.start()
+bot2.start()
+bot1.join()
+bot2.join()
+
+# def testprint(i):
+#
+#     print(i)
+#     time.sleep(1)
+#     print(i)
+# boto1 = threading.Thread(target=testprint, args=(1,))
+# boto2 = threading.Thread(target=testprint, args=(2,))
+# boto1.start()
+# boto2.start()
+# boto1.join()
+# boto2.join()
 
 
 
-
-
-
-db.close()
 
 # driver = webdriver.Firefox()
 # driver.get('https://agora-quiz.education/Games/List')
