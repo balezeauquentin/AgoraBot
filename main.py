@@ -191,7 +191,8 @@ def partie():
             try:
                 bouton_retour = WebDriverWait(driver, 5).until(
                     EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
-
+                WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
                 if bouton_retour:
                     bouton_retour.click()
                 print("partie fini a l'autre")
@@ -338,7 +339,8 @@ while (10):
     driver.get('https://agora-quiz.education/Games/List')
     choose_user()
     bouton_fermer = WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located((By.XPATH, '//a[contains(@class, "mat-tooltip-trigger.avatar-toggle.main-logo-link")]')))
+        EC.visibility_of_element_located(
+            (By.XPATH, '//a[contains(@class, "mat-tooltip-trigger.avatar-toggle.main-logo-link")]')))
     if bouton_fermer:
         bouton_fermer.click()
         bouton_deconnexion = WebDriverWait(driver, 5).until(
