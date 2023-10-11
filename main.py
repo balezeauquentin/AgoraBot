@@ -60,12 +60,12 @@ connected_user = ""
 # motdp = ";AgoraBot0"
 
 # --------------BOT 3--------------#
-idt = "unchat"
-motdp = "deuxchat"
+idt2 = "unchat"
+motdp2 = "deuxchat"
 
 # --------------BOT 4--------------#
-idt2 = "unchien"
-motdp2 = "deuxchien"
+idt = "unchien"
+motdp = "deuxchien"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -119,6 +119,7 @@ def phase():
         if bouton_reponse:
             bouton_reponse.click()
         else:
+            print("j'ai pas trouvé le bon bouton")
             boutons = driver.find_element(By.XPATH,
                                           '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
             # Si au moins un bouton est trouvé
@@ -189,16 +190,20 @@ def partie():
             bouton_suivant.click()
 
             try:
+                print("j'essaye le bouton retour aux parties en cours")
                 bouton_retour = WebDriverWait(driver, 5).until(
                     EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
+                print("le bouton est visible tkt")
                 WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
+                print("je peux cliquer chef'")
                 if bouton_retour:
                     bouton_retour.click()
                 print("partie fini a l'autre")
 
             except:
                 try:
+                    print("Bon bah j'essaye la manche suivante")
                     bouton_manche = WebDriverWait(driver, 10).until(
                         EC.visibility_of_element_located((By.XPATH, '//button[contains(.," Manche Suivante ")]')))
 
@@ -272,9 +277,8 @@ def start_partie(idt2, alternative_idt):
         bouton_partiedejala = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, uwu)))
         if bouton_partiedejala:
-            uwu = '//button[contains(.,"' + idt2 + '")]'
-            bouton_inviter = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, uwu)))
+            WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, uwu)))
             bouton_partiedejala.click()
             partie()
         else:
@@ -340,7 +344,7 @@ while (10):
     choose_user()
     bouton_fermer = WebDriverWait(driver, 5).until(
         EC.visibility_of_element_located(
-            (By.XPATH, '//a[contains(@class, "mat-tooltip-trigger.avatar-toggle.main-logo-link")]')))
+            (By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
     if bouton_fermer:
         bouton_fermer.click()
         bouton_deconnexion = WebDriverWait(driver, 5).until(
