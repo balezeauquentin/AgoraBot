@@ -338,7 +338,7 @@ while (10):
     driver.get('https://agora-quiz.education/Games/List')
     choose_user()
     bouton_fermer = WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
+        EC.visibility_of_element_located((By.XPATH, '//a[contains(@class, "mat-tooltip-trigger.avatar-toggle.main-logo-link")]')))
     if bouton_fermer:
         bouton_fermer.click()
         bouton_deconnexion = WebDriverWait(driver, 5).until(
