@@ -12,6 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+
 # -------------------définition de la classe Database----------------------#
 
 class Database:
@@ -43,6 +44,7 @@ class Database:
         # Ferme la connexion à la db
         self.db.close()
 
+
 # -------------------------définition des variables-------------------------#
 
 driver = webdriver.Firefox()
@@ -59,14 +61,15 @@ connected_user = ""
 
 # --------------BOT 3--------------#
 idt = "unchat"
-motdp= "deuxchat"
+motdp = "deuxchat"
 
 # --------------BOT 4--------------#
 idt2 = "unchien"
-motdp2   = "deuxchien"
+motdp2 = "deuxchien"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
+
 
 # -------------------------définition des fonctions-------------------------#
 
@@ -87,6 +90,7 @@ def get_html():
     else:
         print('La requête a échoué avec le code de statut :', response.status_code)
         return None
+
 
 # Définition de la fonction obtenir_reponse avec un argument question
 
@@ -115,19 +119,21 @@ def phase():
         if bouton_reponse:
             bouton_reponse.click()
         else:
-            boutons = driver.find_element(By.XPATH, '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+            boutons = driver.find_element(By.XPATH,
+                                          '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
             # Si au moins un bouton est trouvé
             if boutons:
-
                 # Attendre que tous les boutons soient cliquables
                 WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH,'//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
+                    (By.XPATH,
+                     '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
 
                 # Cliquez sur le bouton choisi
                 boutons.click()
 
     else:
-        boutons = driver.find_element(By.XPATH,'//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+        boutons = driver.find_element(By.XPATH,
+                                      '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
         # Si au moins un bouton est trouvé
         if boutons:
 
@@ -148,6 +154,7 @@ def phase():
         print(reponse_a_rajouter)
         db.insert(texte_question, reponse_a_rajouter)
 
+
 def partie():
     try:
         print("on est la")
@@ -158,7 +165,7 @@ def partie():
             EC.element_to_be_clickable((By.XPATH, '//b[contains(text(), "VS")]')))
 
         bouton_versus.click()
-  
+
         driver.execute_script('document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2).click();')
         print("ca passe")
     finally:
@@ -205,6 +212,7 @@ def partie():
                 print("fin partie")
                 return
 
+
 # Définition de la fonction connection avec deux arguments idt et motdp
 
 def connection(idt, motdp):
@@ -220,7 +228,8 @@ def connection(idt, motdp):
     # Recherche du bouton_connexion et clic dessus
     print("j'essaye de me connecter")
     time.sleep(1)
-    bouton_connexion = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "primary-button")))
+    bouton_connexion = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.CLASS_NAME, "primary-button")))
     bouton_connexion.click()
     # Récupère l'URL actuelle de la page
     print("Connected")
@@ -245,7 +254,8 @@ def connection(idt, motdp):
 # Définition de la fonction start_partie avec un argument idt2
 def start_partie(idt2, alternative_idt):
     # Recherche de l'élément input_adversaire et envoi de la valeur de idt2
-    input_adversaire = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[data-placeholder="Nom de l\'adversaire"]')))
+    input_adversaire = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, 'input[data-placeholder="Nom de l\'adversaire"]')))
     input_adversaire.send_keys(idt2)
 
     # Recherche du bouton_inviter et clic dessus
@@ -295,6 +305,7 @@ def start_partie(idt2, alternative_idt):
 
     # Si l'URL actuelle est "https://agora-quiz.education/Login", appelle la fonction connection avec les arguments idt et motdp pour se connecter au site
 
+
 def bot(id, mdp, id2):
     # Récupère l'URL actuelle de la page
     url_actuelle = driver.current_url
@@ -312,6 +323,7 @@ def bot(id, mdp, id2):
         start_partie(id2, altenative_idt)
     print("fin")
 
+
 def choose_user():
     global connected_user
     if connected_user == idt:
@@ -320,12 +332,9 @@ def choose_user():
         bot(idt, motdp, idt2)
 
 
-
-
-
 # PROGRAMME PRINCIPAL
 
-while(10):
+while (10):
     driver.get('https://agora-quiz.education/Games/List')
     choose_user()
     bouton_fermer = WebDriverWait(driver, 5).until(
@@ -345,9 +354,6 @@ while(10):
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
-
-
-
 
 """
 ANCIENNE SOLUTION POUR BOT 2 (fermeture du navigateur et réouverture)
