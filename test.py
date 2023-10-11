@@ -245,6 +245,7 @@ def connection(idt, motdp, driver):
         print("erreur connection")
         return False
 
+
 def deconnection(driver):
     bouton_fermer = WebDriverWait(driver, 5).until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
@@ -260,6 +261,8 @@ def deconnection(driver):
             print("erreur déconnexion")
     else:
         print("erreur déconnexion")
+
+
 def principal(idt1, idt2, mdp1, mdp2, alternative):
     print("hello world 1")
     driver = webdriver.Firefox()
@@ -269,8 +272,9 @@ def principal(idt1, idt2, mdp1, mdp2, alternative):
     deconnection(driver)
     print("hello world 2")
     connection(idt2, mdp2, driver)
-    start_partie(idt1,alternative,driver)
+    start_partie(idt1, alternative, driver)
     deconnection(driver)
+
 
 # --------------BOT 1--------------#
 idt1 = "unlapinrameur"
@@ -282,7 +286,7 @@ motdp2 = ";AgoraBot0"
 
 # --------------BOT 3--------------#
 idt3 = "unchat"
-motdp3= "deuxchat"
+motdp3 = "deuxchat"
 
 # --------------BOT 4--------------#
 idt4 = "unchien"
@@ -292,11 +296,6 @@ motdp4 = "deuxchien"
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
 
 db = Database('QR.db')
-
-
-
-
-
 
 db.close()
 
