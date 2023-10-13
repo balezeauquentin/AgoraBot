@@ -48,6 +48,7 @@ class Database:
 # -------------------------définition des variables-------------------------#
 
 driver = webdriver.Firefox()
+driver.maximize_window()
 db = Database('QR.db')
 connected_user = ""
 
@@ -60,12 +61,12 @@ connected_user = ""
 # motdp = ";AgoraBot0"
 
 # --------------BOT 3--------------#
-idt2 = "unchat"
-motdp2 = "deuxchat"
+idt = "unchat"
+motdp = "deuxchat"
 
 # --------------BOT 4--------------#
-idt = "unchien"
-motdp = "deuxchien"
+idt2 = "unchien"
+motdp2 = "deuxchien"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -108,9 +109,13 @@ def phase():
         print("je l'ai")
         print("Réponse :", reponse)
         bonne_reponse = db.get_answer(texte_question)
+        bonne_reponse = bonne_reponse.replace("\\", "\\\\")
+        bonne_reponse = bonne_reponse.replace("’", "\'")
         bonne_reponse = bonne_reponse.replace('"', '\"')
-        expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
+        bonne_reponse = bonne_reponse.replace("'", "\'")
+        print(bonne_reponse)
 
+        expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
         bouton_reponse = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
             (By.XPATH,
@@ -121,7 +126,7 @@ def phase():
         else:
             print("j'ai pas trouvé le bon bouton")
             boutons = driver.find_element(By.XPATH,
-                                          '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+                '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
             # Si au moins un bouton est trouvé
             if boutons:
                 # Attendre que tous les boutons soient cliquables
@@ -134,13 +139,13 @@ def phase():
 
     else:
         boutons = driver.find_element(By.XPATH,
-                                      '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+            '//button[contains(@class, "responses-uncheck")]')
         # Si au moins un bouton est trouvé
         if boutons:
 
             # Attendre que tous les boutons soient cliquables
             WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-                (By.XPATH, '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
+                (By.XPATH, '//button[contains(@class, "responses-uncheck")]')))
 
             # Cliquez sur le bouton choisi
             boutons.click()
