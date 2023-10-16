@@ -107,13 +107,13 @@ def phase():
 
     if reponse:
         print("je l'ai")
-        print("Réponse :", reponse)
         bonne_reponse = db.get_answer(texte_question)
+        print("Avant modif: "+bonne_reponse)
         bonne_reponse = bonne_reponse.replace("\\", "\\\\")
         bonne_reponse = bonne_reponse.replace("’", "\'")
         bonne_reponse = bonne_reponse.replace('"', '\"')
         bonne_reponse = bonne_reponse.replace("'", "\'")
-        print(bonne_reponse)
+        print("Après modif: "+bonne_reponse)
 
         expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
         bouton_reponse = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
@@ -273,7 +273,7 @@ def start_partie(idt2, alternative_idt):
     bouton_inviter = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
     bouton_inviter.click()
-
+    time.sleep(1)
     url_actuelle = driver.current_url
     if url_actuelle != "https://agora-quiz.education/Games/List" and url_actuelle != "https://agora-quiz.education/HomeGroupe":
         partie()
