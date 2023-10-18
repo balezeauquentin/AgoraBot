@@ -273,9 +273,11 @@ def start_partie(idt2, alternative_idt):
     bouton_inviter = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Inviter")]')))
     bouton_inviter.click()
-    time.sleep(1)
+
     url_actuelle = driver.current_url
-    if url_actuelle != "https://agora-quiz.education/Games/List" and url_actuelle != "https://agora-quiz.education/HomeGroupe":
+    print(url_actuelle)
+
+    if not driver.find_element(By.XPATH,'//mat-error(.,"Vous afrrontez déjà ce joueur")]'):
         partie()
     else:
         uwu = '//button[contains(.,"' + idt2 + '")]'
