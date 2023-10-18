@@ -1,7 +1,7 @@
 les question bizare
 les " et \ (normalement fait)
 bouton versus que en vert
-REVOIR REPONSE 745
+REVOIR REPONSE 745 + 827
 
 
 Bouton double
