@@ -61,12 +61,12 @@ connected_user = ""
 # motdp = ";AgoraBot0"
 
 # --------------BOT 3--------------#
-idt2 = "unchat"
-motdp2 = "deuxchat"
+idt = "unchat"
+motdp = "deuxchat"
 
 # --------------BOT 4--------------#
-idt = "unchien"
-motdp = "deuxchien"
+idt2 = "unchien"
+motdp2 = "deuxchien"
 
 # ------Alternative users----------#
 altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -98,67 +98,72 @@ def get_html():
 def phase():
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//i[contains(.,"Rédigée par :")]')))
     driver.execute_script('document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2).click();')
-    element_question = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, '.question-content b')))
-    soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
-    texte_question = soup.get_text()
-    print("Question :", texte_question)
-    reponse = db.check_entry(texte_question)
 
-    if reponse:
-        print("je l'ai")
-        bonne_reponse = db.get_answer(texte_question)
-        print("Avant modif: "+bonne_reponse)
-        bonne_reponse = bonne_reponse.replace("\\", "\\\\")
-        bonne_reponse = bonne_reponse.replace("’", "\'")
-        bonne_reponse = bonne_reponse.replace('"', '\"')
-        bonne_reponse = bonne_reponse.replace("'", "\'")
-        print("Après modif: "+bonne_reponse)
+    try:
+        element_question = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.question-content b')))
+        soup = BeautifulSoup(element_question.get_attribute('outerHTML'), 'html.parser')
+        texte_question = soup.get_text()
+        print("Question :", texte_question)
+        reponse = db.check_entry(texte_question)
 
-        expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
-        bouton_reponse = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-            (By.XPATH,
-             expression_xpath)))
+        if reponse:
+            print("je l'ai")
+            bonne_reponse = db.get_answer(texte_question)
+            print("Avant modif: "+bonne_reponse)
+            #bonne_reponse = bonne_reponse.replace("\\", "\\\\")
+            #bonne_reponse = bonne_reponse.replace('"', '\"')
+            #bonne_reponse = bonne_reponse.replace("'", "\'")
+            print("Après modif: "+bonne_reponse)
 
-        if bouton_reponse:
-            bouton_reponse.click()
+            expression_xpath = f'//button[contains(., "{bonne_reponse}")]'
+            bouton_reponse = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, expression_xpath)))
+            WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, expression_xpath)))
+
+            if bouton_reponse:
+                bouton_reponse.click()
+            else:
+                print("j'ai pas trouvé le bon bouton")
+                boutons = driver.find_element(By.XPATH,
+                    '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+                # Si au moins un bouton est trouvé
+                if boutons:
+                    # Attendre que tous les boutons soient cliquables
+                    WebDriverWait(driver, 5).until(EC.element_to_be_clickable(
+                        (By.XPATH,
+                        '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
+
+                    # Cliquez sur le bouton choisi
+                    boutons.click()
+
         else:
-            print("j'ai pas trouvé le bon bouton")
             boutons = driver.find_element(By.XPATH,
-                '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
+                '//button[contains(@class, "responses-uncheck")]')
             # Si au moins un bouton est trouvé
             if boutons:
+
                 # Attendre que tous les boutons soient cliquables
-                WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH,
-                     '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')))
+                WebDriverWait(driver, 5).until(EC.element_to_be_clickable(
+                    (By.XPATH, '//button[contains(@class, "responses-uncheck")]')))
 
                 # Cliquez sur le bouton choisi
                 boutons.click()
-
-    else:
-        boutons = driver.find_element(By.XPATH,
-            '//button[contains(@class, "responses-uncheck")]')
-        # Si au moins un bouton est trouvé
-        if boutons:
-
-            # Attendre que tous les boutons soient cliquables
-            WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-                (By.XPATH, '//button[contains(@class, "responses-uncheck")]')))
-
-            # Cliquez sur le bouton choisi
-            boutons.click()
-        else:
-            print("Aucun bouton trouvé")
-    if reponse == False:
-        button = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'button.response-true')))
-        reponse_a_rajouter = button.text
-        print("Apprentissage:")
-        print(texte_question)
-        print(reponse_a_rajouter)
-        db.insert(texte_question, reponse_a_rajouter)
+            else:
+                print("Aucun bouton trouvé")
+        if reponse == False:
+            button = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'button.response-true')))
+            reponse_a_rajouter = button.text
+            print("Apprentissage:")
+            print(texte_question)
+            print(reponse_a_rajouter)
+            db.insert(texte_question, reponse_a_rajouter)
+    except:
+        print("Mode QCM de merde")
+        bouton_valide = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Valider 0 choix")]')))
+        if bouton_valide:
+            WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(.,"Valider 0 choix")]')))
+            bouton_valide.click()
 
 
 def partie():
@@ -176,7 +181,7 @@ def partie():
         print("ca passe")
     finally:
 
-        boutons_similaires = WebDriverWait(driver, 10).until(
+        boutons_similaires = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.mat-raised-button.theme-button')))
 
         boutons_similaires.click()
@@ -190,38 +195,41 @@ def partie():
                 bouton_fermer.click()
 
         finally:
-            bouton_suivant = WebDriverWait(driver, 5).until(
-                EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
-            bouton_suivant.click()
 
             try:
-                print("j'essaye le bouton retour aux parties en cours")
-                bouton_retour = WebDriverWait(driver, 5).until(
-                    EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
-                print("le bouton est visible tkt")
-                WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
-                print("je peux cliquer chef'")
-                if bouton_retour:
-                    bouton_retour.click()
-                print("partie fini a l'autre")
+                bouton_suivant = WebDriverWait(driver, 3).until(
+                    EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Suivant")]')))
+                bouton_suivant.click()
+            finally:
 
-            except:
                 try:
-                    print("Bon bah j'essaye la manche suivante")
-                    bouton_manche = WebDriverWait(driver, 10).until(
-                        EC.visibility_of_element_located((By.XPATH, '//button[contains(.," Manche Suivante ")]')))
-
-                    if bouton_manche:
-                        bouton_manche.click()
-                        partie()
+                    print("j'essaye le bouton retour aux parties en cours")
+                    bouton_retour = WebDriverWait(driver, 3).until(
+                        EC.visibility_of_element_located((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
+                    print("le bouton est visible tkt")
+                    WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.XPATH, '//button[contains(.,"Retour aux Parties en cours")]')))
+                    print("je peux cliquer chef'")
+                    if bouton_retour:
+                        bouton_retour.click()
+                    print("partie fini a l'autre")
 
                 except:
-                    print("erreur")
+                    try:
+                        print("Bon bah j'essaye la manche suivante")
+                        bouton_manche = WebDriverWait(driver, 3).until(
+                            EC.visibility_of_element_located((By.XPATH, '//button[contains(.," Manche Suivante ")]')))
 
-            finally:
-                print("fin partie")
-                return
+                        if bouton_manche:
+                            bouton_manche.click()
+                            partie()
+
+                    except:
+                        print("erreur")
+
+                finally:
+                    print("fin partie")
+                    return
 
 
 # Définition de la fonction connection avec deux arguments idt et motdp
@@ -277,7 +285,13 @@ def start_partie(idt2, alternative_idt):
     url_actuelle = driver.current_url
     print(url_actuelle)
 
-    if not driver.find_element(By.XPATH,'//mat-error[contains(.,"Vous afrrontez déjà ce joueur")]'):
+    try:
+        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH,'//mat-error[contains(.,"Vous afrrontez déjà ce joueur")]')))
+        caplante = 0
+    except:
+        caplante = 1
+
+    if caplante:
         partie()
     else:
         uwu = '//button[contains(.,"' + idt2 + '")]'

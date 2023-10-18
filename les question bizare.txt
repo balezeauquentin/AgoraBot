@@ -4,3 +4,16 @@ bouton versus que en vert
 REVOIR REPONSE 745
 
 
+Bouton double
+
+<button _ngcontent-hfe-c252="" mat-raised-button="" fxflex="" class="mat-focus-indicator mat-raised-button mat-button-base fast-transition responses-uncheck" style="flex: 1 1 0%; box-sizing: border-box;"><span class="mat-button-wrapper"><span _ngcontent-hfe-c252="" class="comic-serif-font"> Vrai </span><!----></span><span matripple="" class="mat-ripple mat-button-ripple"></span><span class="mat-button-focus-overlay"></span></button>
+
+Bouton double fini
+
+<button _ngcontent-xfq-c252="" mat-raised-button="" fxflex="" class="mat-focus-indicator mat-raised-button mat-button-base fast-transition responses-uncheck mat-button-disabled" style="flex: 1 1 0%; box-sizing: border-box;" disabled="true"><span class="mat-button-wrapper"><span _ngcontent-xfq-c252="" class="comic-serif-font"> Faux  </span><!----></span><span matripple="" class="mat-ripple mat-button-ripple"></span><span class="mat-button-focus-overlay"></span></button>
+
+Bouton quadruple
+
+<button _ngcontent-xkh-c252="" fxflex="" mat-raised-button="" class="mat-focus-indicator mat-raised-button mat-button-base fast-transition responses-uncheck comic-serif-font" style="flex: 1 1 0%; box-sizing: border-box;"><span class="mat-button-wrapper"><span _ngcontent-xkh-c252="" class="comic-serif-font"> deque </span><!----></span><span matripple="" class="mat-ripple mat-button-ripple"></span><span class="mat-button-focus-overlay"></span></button>
+
+//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]
