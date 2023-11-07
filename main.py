@@ -61,15 +61,15 @@ connected_user = ""
 # motdp = ";AgoraBot0"
 
 # --------------BOT 3--------------#
-idt2 = "unchat"
-motdp2 = "deuxchat"
+idt2 = "ddq"
+motdp2 = "dqsdfqsfdq"
 
 # --------------BOT 4--------------#
-idt = "unchien"
-motdp = "deuxchien"
+idt = "d-s"
+motdp = "zL!dXz9F!d"
 
 # ------Alternative users----------#
-altenative_idt = ("QBalezeau", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
+altenative_idt = ("QBaleze1u", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
 
 
 # -------------------------définition des fonctions-------------------------#
