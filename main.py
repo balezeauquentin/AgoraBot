@@ -1,6 +1,6 @@
 # -------------------------importation des modules-------------------------#
 import time
-import pyautogui
+
 import random
 import requests
 import sqlite3
