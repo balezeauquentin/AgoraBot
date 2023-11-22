@@ -360,24 +360,27 @@ def choose_user():
 
 # PROGRAMME PRINCIPAL
 
-while (10):
-    driver.get('https://agora-quiz.education/Games/List')
-    choose_user()
-    bouton_fermer = WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(
-            (By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
-    if bouton_fermer:
-        bouton_fermer.click()
-        bouton_deconnexion = WebDriverWait(driver, 5).until(
-            EC.visibility_of_element_located((By.XPATH, '//a[contains(.,"Déconnexion")]')))
-        if bouton_deconnexion:
-            bouton_deconnexion.click()
-            print("déconnexion")
-            choose_user()
+while (1):
+    try:
+        driver.get('https://agora-quiz.education/Games/List')
+        choose_user()
+        bouton_fermer = WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(
+                (By.CSS_SELECTOR, '.mat-tooltip-trigger.avatar-toggle.main-logo-link')))
+        if bouton_fermer:
+            bouton_fermer.click()
+            bouton_deconnexion = WebDriverWait(driver, 5).until(
+                EC.visibility_of_element_located((By.XPATH, '//a[contains(.,"Déconnexion")]')))
+            if bouton_deconnexion:
+                bouton_deconnexion.click()
+                print("déconnexion")
+                choose_user()
+            else:
+                print("erreur déconnexion")
         else:
             print("erreur déconnexion")
-    else:
-        print("erreur déconnexion")
+    except:
+        print("changement user")
 
 # Ferme le navigateur web contrôlé par Selenium WebDriver
 driver.quit()
