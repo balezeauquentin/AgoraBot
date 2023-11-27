@@ -56,7 +56,7 @@ connected_user = ""
 
 Bot1 = ("unlapinrameur", "leslapins")
 Bot2 = ("QuantumScribe", ";AgoraBot0")
-Leo = ("Leo-A", "zL!dXz9F!JSif67b")
+Leo = ("Leo-A", "L!dXz9F!JSif67b")
 Estouan = ("unflanpatissier", "utbm")
 Quentin = ("QBalezeau", "TuJxKB8DzuZ99AB")
 
