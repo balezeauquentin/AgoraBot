@@ -52,21 +52,26 @@ driver.maximize_window()
 db = Database('QR.db')
 connected_user = ""
 
-# # --------------BOT 1--------------#
-# idt2 = "unlapinrameur"
-# motdp2 = "leslapins"
+# ---- List of users and passwords----#
 
-# # --------------BOT 2--------------#
-# idt = "QuantumScribe"
-# motdp = ";AgoraBot0"
+Bot1 = ("unlapinrameur", "leslapins")
+Bot2 = ("QuantumScribe", ";AgoraBot0")
+Leo = ("Leo-A", "zL!dXz9F!JSif67b")
+Estouan = ("unflanpatissier", "utbm")
+Quentin = ("QBalezeau", "TuJxKB8DzuZ99AB")
 
-# --------------BOT 3--------------#
-idt = "QBalezeau"
-motdp = "TuJxKB8DzuZ99AB"
+# -------Choose 2 users to play-------#
 
-# --------------BOT 4--------------#
-idt2 = "unflanpatissier"
-motdp2 = "utbm"
+player1 = Bot1
+player2 = Leo
+
+ # ------Set variables for users------#
+
+idt = player1[0]
+motdp = player1[1]
+idt2 = player2[0]
+motdp2 = player2[1]
+
 
 # ------Alternative users----------#
 altenative_idt = ("", "hallaine", "Leo-A", "Wikiro", "Nycolas", "SuperTimCraft")
@@ -108,7 +113,7 @@ def phase():
         reponse = db.check_entry(texte_question)
 
         if reponse:
-            print("je l'ai")
+            print("Question déjà dans la db")
             bonne_reponse = db.get_answer(texte_question)
             print("Avant modif: "+bonne_reponse)
             #bonne_reponse = bonne_reponse.replace("\\", "\\\\")
@@ -123,7 +128,7 @@ def phase():
             if bouton_reponse:
                 bouton_reponse.click()
             else:
-                print("j'ai pas trouvé le bon bouton")
+                print("Je n'ai pas trouvé le bouton")
                 boutons = driver.find_element(By.XPATH,
                     '//button[contains(@class, "mat-raised-button") and contains(@class, "comic-serif-font")]')
                 # Si au moins un bouton est trouvé
@@ -245,7 +250,7 @@ def connection(idt, motdp):
     mdp.send_keys(motdp)
 
     # Recherche du bouton_connexion et clic dessus
-    print("j'essaye de me connecter")
+    print("j'essaye de me connecter à " + idt)
     time.sleep(1)
     bouton_connexion = WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.CLASS_NAME, "primary-button")))
