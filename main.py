@@ -56,14 +56,16 @@ connected_user = ""
 
 Bot1 = ("unlapinrameur", "leslapins")
 Bot2 = ("QuantumScribe", ";AgoraBot0")
+Bot3 = ("LeZinzin", "dingdong")
+Bot4 = ("DrKawachima", "domojesuisjaponais")
 Leo = ("Leo-A", "L!dXz9F!JSif67b")
 Estouan = ("unflanpatissier", "utbm")
 Quentin = ("QBalezeau", "TuJxKB8DzuZ99AB")
 
 # -------Choose 2 users to play-------#
 
-player1 = Bot1
-player2 = Leo
+player1 = Bot3
+player2 = Bot4
 
  # ------Set variables for users------#
 
