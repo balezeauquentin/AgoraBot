@@ -64,8 +64,8 @@ Quentin = ("QBalezeau", "TuJxKB8DzuZ99AB")
 
 # -------Choose 2 users to play-------#
 
-player1 = Bot3
-player2 = Bot4
+player1 = Quentin
+player2 = Estouan
 
  # ------Set variables for users------#
 
