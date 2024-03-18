@@ -166,7 +166,7 @@ def phase():
             print(reponse_a_rajouter)
             db.insert(texte_question, reponse_a_rajouter)
     except:
-        print("Mode QCM de merde")
+        print("Mode QCM")
         bouton_valide = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, '//button[contains(.,"Valider 0 choix")]')))
         if bouton_valide:
             WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(.,"Valider 0 choix")]')))
